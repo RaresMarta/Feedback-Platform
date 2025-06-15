@@ -6,3 +6,7 @@ export type TFeedbackItem = {
   text: string;
   daysAgo: number;
 };
+
+export type ErrorMessageProps = {
+  message: string;
+};

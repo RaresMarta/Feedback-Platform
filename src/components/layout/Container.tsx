@@ -4,23 +4,31 @@ import Header from "./Header";
 
 type ContainerProps = {
   feedbackItems: TFeedbackItem[];
-  isLoading: boolean;
+  loading: boolean;
   errorMessage: string;
+  setErrorMessage: (message: string) => void;
   handleAddToList: (text: string) => void;
+  submitting: boolean;
 };
 
 export default function Container({
   feedbackItems,
-  isLoading,
+  loading,
   errorMessage,
+  setErrorMessage,
   handleAddToList,
+  submitting,
 }: ContainerProps) {
   return (
     <main className="container">
-      <Header handleAddToList={handleAddToList} />
+      <Header 
+        handleAddToList={handleAddToList} 
+        setErrorMessage={setErrorMessage}
+        submitting={submitting}
+      />
       <FeedbackList
         feedbackItems={feedbackItems}
-        isLoading={isLoading}
+        loading={loading}
         errorMessage={errorMessage}
       />
     </main>

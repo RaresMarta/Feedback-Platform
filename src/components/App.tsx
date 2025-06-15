@@ -4,77 +4,114 @@ import Footer from "./layout/Footer";
 import HashtagList from "./HashtagList";
 import { TFeedbackItem } from "../lib/types";
 
+
 function App() {
   const [feedbackItems, setFeedbackItems] = useState<TFeedbackItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [selectedHashtag, setSelectedHashtag] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const hashtags = Array.from(
+    new Set(feedbackItems.map(item => `#${item.company}`))
+  ).sort();
+
+  console.log("All IDs:", feedbackItems.map(item => item.id));
+
+  useEffect(() => { // Fetch feedback items on mount
+    const fetchFeedbackItems = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          "https://bytegrad.com/course-assets/projects/corpcomment/api/feedbacks"
+        );
+        // Check if the response is ok
+        if (!response.ok) {
+          throw new Error();
+        }
+        // Parse the JSON response
+        const data = await response.json();
+        
+
+        setFeedbackItems(data.feedbacks);
+      } catch (error) {
+        setErrorMessage("Failed to fetch feedback items. Please try again.");
+      }
+      setLoading(false);
+    };
+    fetchFeedbackItems();
+  }, []);
+
   const handleAddToList = async (text: string) => {
+    if (submitting) return;
+    setSubmitting(true);
+
+    if (feedbackItems.some(item => item.text === text)) {
+      setErrorMessage("Duplicate feedback is not allowed.");
+      setSubmitting(false);
+      return;
+    }
+
     const companyName = text
       .split(" ")
       .find((word) => word.includes("#"))!
       .substring(1);
 
     const newItem: TFeedbackItem = {
-      id: new Date().getTime(),
-      text: text,
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      text,
       upvoteCount: 0,
       daysAgo: 0,
       company: companyName,
-      badgeLetter: companyName.substring(0, 1).toUpperCase(),
+      badgeLetter: companyName[0].toUpperCase(),
     };
 
-    setFeedbackItems([...feedbackItems, newItem]);
+    setFeedbackItems(prev => [...prev, newItem]);
 
-    await fetch(
-      "https://bytegrad.com/course-assets/projects/corpcomment/api/feedbacks",
-      {
-        method: "POST",
-        body: JSON.stringify(newItem),
-        headers: {
-          Accept: "application/json",
-          "Content-type": "application/json",
-        },
-      }
-    );
+    try {
+      await fetch(
+        "https://bytegrad.com/course-assets/projects/corpcomment/api/feedbacks",
+        {
+          method: "POST",
+          body: JSON.stringify(newItem),
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json",
+          },
+        }
+      );
+    } catch (error) {
+      setErrorMessage("Failed to add feedback. Please try again.");
+      setFeedbackItems(prev => prev.filter(item => item.id !== newItem.id));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  useEffect(() => {
-    const fetchFeedbackItems = async () => {
-      setIsLoading(true);
+  const handleSelectHashtag = (tag: string) => {
+    setSelectedHashtag(prev => prev === tag ? null : tag);
+    setErrorMessage(""); 
+  };
 
-      try {
-        const response = await fetch(
-          "https://bytegrad.com/course-assets/projects/corpcomment/api/feedbacks"
-        );
-
-        if (!response.ok) {
-          throw new Error();
-        }
-
-        const data = await response.json();
-        setFeedbackItems(data.feedbacks);
-      } catch (error) {
-        setErrorMessage("Something went wrong.");
-      }
-
-      setIsLoading(false);
-    };
-
-    fetchFeedbackItems();
-  }, []);
+  const filteredItems = selectedHashtag
+    ? feedbackItems.filter(item => `#${item.company}` === selectedHashtag)
+    : feedbackItems;
 
   return (
     <div className="app">
       <Container
-        feedbackItems={feedbackItems}
-        isLoading={isLoading}
+        feedbackItems={filteredItems}
+        loading={loading}
         errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
         handleAddToList={handleAddToList}
+        submitting={submitting}
       />
-
-      <HashtagList />
-
+      <HashtagList
+        hashtags={hashtags}
+        selectedHashtag={selectedHashtag}
+        handleSelectHashtag={handleSelectHashtag}
+      />
       <Footer />
     </div>
   );

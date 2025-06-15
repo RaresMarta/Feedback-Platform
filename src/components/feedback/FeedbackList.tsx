@@ -5,18 +5,18 @@ import { TFeedbackItem } from "../../lib/types";
 
 type FeedbackListProps = {
   feedbackItems: TFeedbackItem[];
-  isLoading: boolean;
+  loading: boolean;
   errorMessage: string;
 };
 
 export default function FeedbackList({
   feedbackItems,
-  isLoading,
+  loading,
   errorMessage,
 }: FeedbackListProps) {
   return (
     <ol className="feedback-list">
-      {isLoading && <Spinner />}
+      {loading && <Spinner />}
 
       {errorMessage && <ErrorMessage message={errorMessage} />}
 

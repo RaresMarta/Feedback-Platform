@@ -3,20 +3,42 @@ import { MAX_CHARACTERS } from "../../lib/constants";
 
 type FeedbackFormProps = {
   onAddToList: (text: string) => void;
+  setErrorMessage: (message: string) => void;
+  submitting: boolean;
 };
 
-export default function FeedbackForm({ onAddToList }: FeedbackFormProps) {
+export default function FeedbackForm({ onAddToList, setErrorMessage, submitting }: FeedbackFormProps) {
   const [text, setText] = useState("");
   const charCount = MAX_CHARACTERS - text.length;
 
   const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newText = event.target.value;
+    let newText = event.target.value;
+  
     if (newText.length > MAX_CHARACTERS) return;
+
+    // Prevent basic script injections
+    if (newText.includes("<script>")) {
+      setErrorMessage("Scripts are not allowed");
+      newText = newText.replace("<script>", "");
+    } 
+    else if (newText.includes("@")) {
+      setErrorMessage("No @ symbol allowed");
+      newText = newText.replace("@", "");
+    } 
+    else {
+      setErrorMessage("");
+    }
     setText(newText);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (text.trim() === "") {
+      setErrorMessage("Feedback cannot be empty");
+      return;
+    }
+
     onAddToList(text);
     setText("");
   };
@@ -38,7 +60,7 @@ export default function FeedbackForm({ onAddToList }: FeedbackFormProps) {
 
       <div>
         <p className="u-italic">{charCount}</p>
-        <button>Submit</button>
+        <button disabled={submitting}>Submit</button>
       </div>
     </form>
   );

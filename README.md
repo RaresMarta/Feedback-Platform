@@ -1,4 +1,4 @@
-# CorpComment — Share Your Feedback, One Hashtag at a Time 💬
+# CorpComment — Share Your Feedback 💬
 
 CorpComment is a simple React application for anonymously posting and viewing feedback about companies using hashtags.
 

@@ -492,6 +492,16 @@ form button span::selection {
   margin-top: -1px;
 }
 
+/* UPVOTED BUTTON */
+.feedback > button.upvoted {
+  background-color: #f3f6f8;
+}
+
+.feedback > button.upvoted svg,
+.feedback > button.upvoted span {
+  color: #784a86;
+}
+
 /* HASHTAGS */
 .hashtags {
   position: absolute;

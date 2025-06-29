@@ -22,7 +22,10 @@ export default function FeedbackItem({ feedbackItem }: itemProps) {
 
   return (
     <li className="feedback">
-      <button onClick={handleUpvote}>
+      <button 
+        onClick={handleUpvote}
+        className={toggleUpvote ? "upvoted" : ""}
+      >
         <TriangleUpIcon />
         <span>{upvotes}</span>
       </button>

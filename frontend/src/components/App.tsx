@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import Container from "./layout/Container";
 import Footer from "./layout/Footer";
 import HashtagList from "./HashtagList";
-import { TFeedbackItem } from "../lib/types";
-
-const API_BASE_URL = "http://localhost:8000/api";
+import { TFeedbackItem, TFeedbackCreate } from "../lib/types";
+import { getAllFeedbacks, postFeedback } from "./apis/feedbackApi";
 
 function App() {
   const [feedbackItems, setFeedbackItems] = useState<TFeedbackItem[]>([]);
@@ -23,13 +22,7 @@ function App() {
     const fetchFeedbackItems = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/feedbacks`);
-        // Check if the response is ok
-        if (!response.ok) {
-          throw new Error();
-        }
-        // Parse the JSON response
-        const data = await response.json();
+        const data = await getAllFeedbacks();
         setFeedbackItems(data);
       } catch (error) {
         setErrorMessage("Failed to fetch feedback items. Please try again.");
@@ -39,38 +32,18 @@ function App() {
     fetchFeedbackItems();
   }, []);
 
-  const handleAddToList = async (content: string) => {
+  const handleAddToList = async (feedbackData: TFeedbackCreate) => {
     if (submitting) return;
     setSubmitting(true);
 
-    if (feedbackItems.some(item => item.content === content)) {
+    if (feedbackItems.some(item => item.content === feedbackData.content)) {
       setErrorMessage("Duplicate feedback is not allowed.");
       setSubmitting(false);
       return;
     }
 
-    const companyName = content
-      .split(" ")
-      .find((word) => word.includes("#"))!
-      .substring(1);
-
     try {
-      const response = await fetch(`${API_BASE_URL}/feedbacks`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content,
-          company: companyName,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error();
-      }
-
-      const newItem = await response.json();
+      const newItem = await postFeedback(feedbackData);
       setFeedbackItems(prev => [...prev, newItem]);
     } catch (error) {
       setErrorMessage("Failed to add feedback. Please try again.");

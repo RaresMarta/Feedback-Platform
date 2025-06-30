@@ -1,4 +1,4 @@
-import { TFeedbackItem } from "../../lib/types";
+import { TFeedbackItem, TFeedbackCreate } from "../../lib/types";
 import FeedbackList from "../feedback/FeedbackList";
 import Header from "./Header";
 
@@ -7,7 +7,7 @@ type ContainerProps = {
   loading: boolean;
   errorMessage: string;
   setErrorMessage: (message: string) => void;
-  handleAddToList: (text: string) => void;
+  handleAddToList: (feedback: TFeedbackCreate) => void;
   submitting: boolean;
 };
 

@@ -237,7 +237,8 @@ label svg {
   opacity: 0.5;
 }
 
-form div:last-child {
+/* FORM CONTROLS */
+.form-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -245,59 +246,82 @@ form div:last-child {
   margin-top: -8px;
 }
 
-/* COUNTER */
-form div:last-child p {
-  font-weight: 500;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.25);
-  pointer-events: none;
+.char-count {
+  flex: 0 0 auto;
 }
 
-form div:last-child p::selection,
-form div:last-child p > *::selection {
-  color: rgba(255, 255, 255, 0.85);
-  background-color: rgba(255, 255, 255, 0.05);
+.form-buttons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-/* SUBMIT BTN */
-form button {
-  color: #161921;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  padding: 4px 16px 9px;
-  border-radius: 500px;
-  font-weight: 600;
-  background-color: #fff;
+.anonymous-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
   cursor: pointer;
-  transition: all 0.2s;
-  backface-visibility: hidden;
-  transform: translateY(-2px) translateZ(0) rotate(0);
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  position: static;
 }
 
-form button:hover,
-form button:focus {
-  transform: translateY(-2px) translateZ(0) scale(1.15);
+.toggle-label:hover {
+  opacity: 1;
 }
 
-form button:active {
-  transform: translateY(-2px) translateZ(0) scale(1.07);
+.toggle-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 3px;
+  margin-right: 8px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
-form button:hover span {
-  transform: translateY(2px) translateZ(0);
+.toggle-checkbox:checked {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.7);
 }
 
-form button span {
-  display: block;
-  transition: all 0.2s;
-  backface-visibility: hidden;
-  transform: translateY(2px) translateZ(0) rotate(0);
+.toggle-checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 12px;
+  top: -2px;
+  left: 2px;
 }
 
-form button span::selection {
-  color: rgba(0, 0, 0, 0.85);
-  background-color: rgba(0, 0, 0, 0.1);
+.toggle-text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Update existing form button styles */
+.submit-button {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover,
+.submit-button:focus {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.submit-button:active {
+  background-color: rgba(255, 255, 255, 0.16);
 }
 
 /* FEEDBACKS */

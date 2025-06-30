@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { MAX_CHARACTERS } from "../../lib/constants";
+import { TFeedbackCreate } from "../../lib/types";
 
 type FeedbackFormProps = {
-  onAddToList: (text: string) => void;
+  onAddToList: (feedback: TFeedbackCreate) => void;
   setErrorMessage: (message: string) => void;
   submitting: boolean;
 };
 
 export default function FeedbackForm({ onAddToList, setErrorMessage, submitting }: FeedbackFormProps) {
   const [text, setText] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const charCount = MAX_CHARACTERS - text.length;
 
   const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -39,8 +41,20 @@ export default function FeedbackForm({ onAddToList, setErrorMessage, submitting 
       return;
     }
 
-    onAddToList(text);
+    // Extract company from hashtag
+    const hashtagMatch = text.match(/#(\w+)/);
+    const company = hashtagMatch ? hashtagMatch[1] : "unknown";
+
+    onAddToList({
+      content: text,
+      company,
+      is_anonymous: isAnonymous
+    });
     setText("");
+  };
+
+  const toggleAnonymous = () => {
+    setIsAnonymous(prev => !prev);
   };
 
   return (
@@ -58,9 +72,27 @@ export default function FeedbackForm({ onAddToList, setErrorMessage, submitting 
         Enter your feedback here, remember to #hashtag the company
       </label>
 
-      <div>
-        <p className="u-italic">{charCount}</p>
-        <button disabled={submitting}>Submit</button>
+      <div className="form-controls">
+        <div className="char-count">
+          <p className="u-italic">{charCount}</p>
+        </div>
+        
+        <div className="form-buttons">
+          <div className="anonymous-toggle">
+            <label className="toggle-label">
+              <input
+                type="checkbox"
+                checked={isAnonymous}
+                onChange={toggleAnonymous}
+                className="toggle-checkbox"
+              />
+              <span className="toggle-text">Post anonymously</span>
+            </label>
+          </div>
+          <button disabled={submitting} className="submit-button">
+            Submit
+          </button>
+        </div>
       </div>
     </form>
   );

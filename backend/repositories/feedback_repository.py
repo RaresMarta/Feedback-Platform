@@ -29,7 +29,7 @@ class FeedbackRepository:
         self.db.refresh(feedback_orm)         # Refresh object with DB values
         return self._to_domain(feedback_orm)  # Convert to domain model
     
-    def upvote(self, feedback_id: int) -> Optional[FeedbackDomain]:
+    def upvote(self, feedback_id: int) -> None:
         self.db.query(Feedback).filter(Feedback.id == feedback_id).update(
             {"upvote_count": Feedback.upvote_count + 1}
         )

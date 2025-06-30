@@ -2,9 +2,10 @@ import FeedbackForm from "../feedback/FeedbackForm";
 import Logo from "../Logo";
 import PageHeading from "../PageHeading";
 import Pattern from "../Pattern";
+import { TFeedbackCreate } from "../../lib/types";
 
 type HeaderProps = {
-  handleAddToList: (text: string) => void;
+  handleAddToList: (feedback: TFeedbackCreate) => void;
   setErrorMessage: (message: string) => void;
   submitting: boolean;
 };

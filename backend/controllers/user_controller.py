@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
+from typing import Optional
+import logging
 
 from database import get_db
 from repositories.user_repository import UserRepository
@@ -9,14 +11,18 @@ from services.user_service import UserService, SECRET_KEY, ALGORITHM
 from domain.schemas import UserCreate, UserResponse, Token
 from domain.models import UserDomain
 
+
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/users/login")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def get_user_service(db: Session = Depends(get_db)) -> UserService:
     repository = UserRepository(db)
     return UserService(repository)
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    logger.info("Getting current user")
     credentials_exception = HTTPException(
         status_code=401,
         detail="Could not validate credentials",
@@ -36,8 +42,15 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
+async def get_optional_user(token: str = Depends(oauth2_scheme)) -> Optional[UserDomain]:
+    try:
+        return await get_current_user(token)
+    except:
+        return None
+
 @router.post("/register", response_model=UserResponse)
 def register_user(user_create: UserCreate, service: UserService = Depends(get_user_service)):
+    logger.info("Registering user")
     user_domain = UserDomain(
         username=user_create.username,
         email=user_create.email,
@@ -47,6 +60,7 @@ def register_user(user_create: UserCreate, service: UserService = Depends(get_us
 
 @router.post("/login", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), service: UserService = Depends(get_user_service)):
+    logger.info("Logging in" + form_data.username)
     # Authenticate user
     user = service.authenticate_user(email=form_data.username, password=form_data.password)
     
@@ -59,8 +73,9 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), service: UserS
 
 @router.get("/me", response_model=UserResponse)
 async def get_user_me(current_user = Depends(get_current_user)):
-    return {
-        "id": current_user.id,
-        "username": current_user.username,
-        "email": current_user.email
-    } 
+    logger.info("Getting user me")
+    return UserResponse(
+        id=current_user.id,
+        username=current_user.username,
+        email=current_user.email
+    ) 

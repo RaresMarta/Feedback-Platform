@@ -1,6 +1,6 @@
 # CorpComment
 
-A web application for submitting and viewing anonymous feedback about companies.
+A web application for submitting and viewing feedback about companies.
 
 ## Project Structure
 

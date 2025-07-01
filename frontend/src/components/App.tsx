@@ -5,6 +5,7 @@ import HashtagList from "./HashtagList";
 import { TFeedbackItem, TFeedbackCreate } from "../lib/types";
 import { getAllFeedbacks, postFeedback } from "./apis/feedbackApi";
 
+
 function App() {
   const [feedbackItems, setFeedbackItems] = useState<TFeedbackItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -12,13 +13,13 @@ function App() {
   const [selectedHashtag, setSelectedHashtag] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Retrieve tags from user posts
   const hashtags = Array.from(
     new Set(feedbackItems.map(item => `#${item.company}`))
   ).sort();
 
-  console.log("All IDs:", feedbackItems.map(item => item.id));
-
-  useEffect(() => { // Fetch feedback items on mount
+  // Fetch feedback items
+  useEffect(() => { 
     const fetchFeedbackItems = async () => {
       setLoading(true);
       try {
@@ -32,16 +33,20 @@ function App() {
     fetchFeedbackItems();
   }, []);
 
+  // Add feedback item
   const handleAddToList = async (feedbackData: TFeedbackCreate) => {
+    // Prevent button action if already submitting
     if (submitting) return;
     setSubmitting(true);
 
+    // Check for duplicate feedback
     if (feedbackItems.some(item => item.content === feedbackData.content)) {
       setErrorMessage("Duplicate feedback is not allowed.");
       setSubmitting(false);
       return;
     }
 
+    // Post feedback
     try {
       const newItem = await postFeedback(feedbackData);
       setFeedbackItems(prev => [...prev, newItem]);
@@ -52,11 +57,13 @@ function App() {
     }
   };
 
+  // Select company tag
   const handleSelectHashtag = (tag: string) => {
     setSelectedHashtag(prev => prev === tag ? null : tag);
     setErrorMessage(""); 
   };
 
+  // Filter feedback items by company tag
   const filteredItems = selectedHashtag
     ? feedbackItems.filter(item => `#${item.company}` === selectedHashtag)
     : feedbackItems;

@@ -13,7 +13,6 @@ export type TFeedbackItem = {
 export type TFeedbackCreate = {
   content: string;
   company: string;
-  is_anonymous: boolean;
 };
 
 export type TUpvoteResponse = {

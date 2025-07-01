@@ -3,15 +3,7 @@ export default function Footer() {
     <footer className="footer">
       <small>
         <p>
-          &copy; Copyright by{" "}
-          <a target="_blank" href="https://bytegrad.com">
-            ByteGrad.com
-          </a>
-          . Intended for learning or your portofolio.
-        </p>
-        <p>
-          <span className="u-bold u-italic">Not allowed</span> to use as your
-          own teaching material.
+          &copy; 2025 CorpComment. All rights reserved.
         </p>
       </small>
     </footer>

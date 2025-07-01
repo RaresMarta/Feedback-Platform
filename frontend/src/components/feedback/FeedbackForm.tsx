@@ -10,8 +10,6 @@ type FeedbackFormProps = {
 
 export default function FeedbackForm({ onAddToList, setErrorMessage, submitting }: FeedbackFormProps) {
   const [text, setText] = useState("");
-  const [isAnonymous, setIsAnonymous] = useState(false);
-  const charCount = MAX_CHARACTERS - text.length;
 
   const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     let newText = event.target.value;
@@ -47,14 +45,9 @@ export default function FeedbackForm({ onAddToList, setErrorMessage, submitting 
 
     onAddToList({
       content: text,
-      company,
-      is_anonymous: isAnonymous
+      company
     });
     setText("");
-  };
-
-  const toggleAnonymous = () => {
-    setIsAnonymous(prev => !prev);
   };
 
   return (
@@ -63,33 +56,27 @@ export default function FeedbackForm({ onAddToList, setErrorMessage, submitting 
         value={text}
         onChange={handleInput}
         id="feedback-textarea"
-        placeholder="label"
+        placeholder="Enter your feedback here, remember to #hashtag the company"
         spellCheck={false}
         maxLength={MAX_CHARACTERS}
       />
 
       <label htmlFor="feedback-textarea">
-        Enter your feedback here, remember to #hashtag the company
+        Enter your feedback and tag the #company
       </label>
 
       <div className="form-controls">
         <div className="char-count">
-          <p className="u-italic">{charCount}</p>
+          <p className="u-italic">{text.length} / {MAX_CHARACTERS}</p>
         </div>
         
         <div className="form-buttons">
-          <div className="anonymous-toggle">
-            <label className="toggle-label">
-              <input
-                type="checkbox"
-                checked={isAnonymous}
-                onChange={toggleAnonymous}
-                className="toggle-checkbox"
-              />
-              <span className="toggle-text">Post anonymously</span>
-            </label>
-          </div>
-          <button disabled={submitting} className="submit-button">
+          {/* Submit button */}
+          <button 
+            type="submit" 
+            disabled={submitting} 
+            className="submit-button"
+          >
             Submit
           </button>
         </div>

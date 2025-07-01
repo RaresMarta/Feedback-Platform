@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../../lib/constants";
-import { fetchWithAuth, handleApiError } from "./apiUtils";
+import { fetchWithAuth, handleApiError, setAuthToken, removeAuthToken } from "./apiUtils";
 import { TUserRegister, TUserLogin, TUserResponse, TAuthToken } from "../../lib/types";
 
 const USERS_URL = `${API_BASE_URL}/users`;
@@ -61,19 +61,4 @@ export async function getCurrentUser(): Promise<TUserResponse> {
     
     const data = await response.json();
     return data as TUserResponse;
-}
-
-// Helper function to set auth token
-export function setAuthToken(token: string): void {
-    localStorage.setItem("token", token);
-}
-
-// Helper function to remove auth token (logout)
-export function removeAuthToken(): void {
-    localStorage.removeItem("token");
-}
-
-// Helper function to check if user is logged in
-export function isLoggedIn(): boolean {
-    return !!localStorage.getItem("token");
 }

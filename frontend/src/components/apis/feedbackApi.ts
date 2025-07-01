@@ -4,7 +4,7 @@ import { fetchWithAuth, handleApiError } from "./apiUtils"
 
 const FEEDBACKS_URL = `${API_BASE_URL}/feedbacks`
 
-// Get all feedbacks
+// Get all feedback items
 export async function getAllFeedbacks(): Promise<TFeedbackItem[]> {
     const response = await fetch(FEEDBACKS_URL);
     if (!response.ok) {
@@ -46,8 +46,7 @@ export async function upvoteFeedback(feedbackId: number): Promise<TUpvoteRespons
 
 // Get user's feedbacks
 export async function getUserFeedbacks(userId: number): Promise<TFeedbackItem[]> {
-    const response = await fetchWithAuth(`${API_BASE_URL}/users/${userId}/feedbacks`);
-    
+    const response = await fetchWithAuth(`${FEEDBACKS_URL}/user/${userId}`);
     if (!response.ok) {
         await handleApiError(response);
     }

@@ -15,6 +15,7 @@ export function setAuthToken(token: string): void {
 // Remove authentication token
 export function removeAuthToken(): void {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
 }
 
 // Check if user is logged in

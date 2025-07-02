@@ -2,29 +2,14 @@ from sqlalchemy.orm import Session
 from domain.models import User
 from domain.models import UserDomain
 from typing import Optional, List
+from domain.schemas import UserResponse
 
 
 class UserRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_all(self) -> List[UserDomain]:
-        users = self.db.query(User).all()
-        return [self._to_domain(user) for user in users]
-    
-    def get_by_id(self, user_id: int) -> Optional[UserDomain]:
-        user = self.db.query(User).filter(User.id == user_id).first()
-        return self._to_domain(user) if user else None
-    
-    def get_by_email(self, email: str) -> Optional[UserDomain]:
-        user = self.db.query(User).filter(User.email == email).first()
-        return self._to_domain(user) if user else None
-    
-    def get_by_username(self, username: str) -> Optional[UserDomain]:
-        user = self.db.query(User).filter(User.username == username).first()
-        return self._to_domain(user) if user else None
-    
-    def create(self, user_domain: UserDomain) -> UserDomain:
+    def create(self, user_domain: UserDomain) -> UserResponse:
         user_orm = User(
             username=user_domain.username, 
             email=user_domain.email, 
@@ -33,9 +18,25 @@ class UserRepository:
         self.db.add(user_orm)
         self.db.commit()
         self.db.refresh(user_orm)
-        return self._to_domain(user_orm)
+        return self._to_response_model(user_orm)
+
+    def get_all(self) -> List[UserResponse]:
+        users = self.db.query(User).all()
+        return [self._to_response_model(user) for user in users]
     
-    def update(self, user_id: int, user_domain: UserDomain) -> Optional[UserDomain]:
+    def get_by_id(self, user_id: int) -> Optional[UserResponse]:
+        user = self.db.query(User).filter(User.id == user_id).first()
+        return self._to_response_model(user) if user else None
+    
+    def get_by_email(self, email: str) -> Optional[UserDomain]:
+        user = self.db.query(User).filter(User.email == email).first()
+        return user.to_domain() if user else None
+    
+    def get_by_username(self, username: str) -> Optional[UserResponse]:
+        user = self.db.query(User).filter(User.username == username).first()
+        return self._to_response_model(user) if user else None
+    
+    def update(self, user_id: int, user_domain: UserDomain) -> Optional[UserResponse]:
         user = self.db.query(User).filter(User.id == user_id).first()
         if not user:
             return None
@@ -49,12 +50,18 @@ class UserRepository:
             
         self.db.commit()
         return self.get_by_id(user_id)
-    
-    def _to_domain(self, user: User) -> UserDomain:
-        return UserDomain(
-            id=getattr(user, 'id', None),
+
+    def delete(self, user_id: int) -> bool:
+        user = self.db.query(User).filter(User.id == user_id).first()
+        if not user:
+            return False
+        self.db.delete(user)
+        self.db.commit()
+        return True
+
+    def _to_response_model(self, user: UserDomain) -> UserResponse:
+        return UserResponse(
+            id=getattr(user, 'id', 0),
             username=getattr(user, 'username', ''),
-            email=getattr(user, 'email', ''),
-            password=getattr(user, 'hashed_password', None),
-            created_at=getattr(user, 'created_at', None)
-        ) 
+            email=getattr(user, 'email', '')
+        )

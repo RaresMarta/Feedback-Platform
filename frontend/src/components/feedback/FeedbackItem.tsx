@@ -1,6 +1,7 @@
 import { TriangleUpIcon } from "@radix-ui/react-icons";
 import { TFeedbackItem } from "../../lib/types";
 import { useState } from "react";
+import { upvoteFeedback } from "../apis/feedbackApi";
 
 type itemProps = {
   feedbackItem: TFeedbackItem;
@@ -10,13 +11,13 @@ export default function FeedbackItem({ feedbackItem }: itemProps) {
   const [toggleUpvote, setToggleUpvote] = useState(false);
   const [upvotes, setUpvotes] = useState(feedbackItem.upvoteCount);
 
-  const handleUpvote = () => {
-    if (!toggleUpvote) {
+  const handleUpvote = async () => {
+    try {
+      await upvoteFeedback(feedbackItem.id);
       setUpvotes(upvotes + 1);
       setToggleUpvote(true);
-    } else {
-      setUpvotes(upvotes - 1);
-      setToggleUpvote(false);
+    } catch (error) {
+      console.error("Failed to upvote feedback:", error);
     }
   };
 

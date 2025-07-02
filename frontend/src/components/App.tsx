@@ -1,90 +1,37 @@
+import { Routes, Route, Navigate } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import AccountPage from "./pages/AccountPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import { useEffect, useState } from "react";
-import Container from "./layout/Container";
-import Footer from "./layout/Footer";
-import HashtagList from "./HashtagList";
-import { TFeedbackItem, TFeedbackCreate } from "../lib/types";
-import { getAllFeedbacks, postFeedback } from "./apis/feedbackApi";
+import { TUserResponse } from "../lib/types";
 
 
 function App() {
-  const [feedbackItems, setFeedbackItems] = useState<TFeedbackItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [selectedHashtag, setSelectedHashtag] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<TUserResponse | null>(null);
 
-  // Retrieve tags from user posts
-  const hashtags = Array.from(
-    new Set(feedbackItems.map(item => `#${item.company}`))
-  ).sort();
-
-  // Fetch feedback items
-  useEffect(() => { 
-    const fetchFeedbackItems = async () => {
-      setLoading(true);
-      try {
-        const data = await getAllFeedbacks();
-        setFeedbackItems(data);
-      } catch (error) {
-        setErrorMessage("Failed to fetch feedback items. Please try again.");
-      }
-      setLoading(false);
-    };
-    fetchFeedbackItems();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+    const user = localStorage.getItem("user");
+    if (user) {
+      setUser(JSON.parse(user));
+    }
   }, []);
 
-  // Add feedback item
-  const handleAddToList = async (feedbackData: TFeedbackCreate) => {
-    // Prevent button action if already submitting
-    if (submitting) return;
-    setSubmitting(true);
-
-    // Check for duplicate feedback
-    if (feedbackItems.some(item => item.content === feedbackData.content)) {
-      setErrorMessage("Duplicate feedback is not allowed.");
-      setSubmitting(false);
-      return;
-    }
-
-    // Post feedback
-    try {
-      const newItem = await postFeedback(feedbackData);
-      setFeedbackItems(prev => [...prev, newItem]);
-    } catch (error) {
-      setErrorMessage("Failed to add feedback. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  // Select company tag
-  const handleSelectHashtag = (tag: string) => {
-    setSelectedHashtag(prev => prev === tag ? null : tag);
-    setErrorMessage(""); 
-  };
-
-  // Filter feedback items by company tag
-  const filteredItems = selectedHashtag
-    ? feedbackItems.filter(item => `#${item.company}` === selectedHashtag)
-    : feedbackItems;
-
   return (
-    <div className="app">
-      <Container
-        feedbackItems={filteredItems}
-        loading={loading}
-        errorMessage={errorMessage}
-        setErrorMessage={setErrorMessage}
-        handleAddToList={handleAddToList}
-        submitting={submitting}
-      />
-      <HashtagList
-        hashtags={hashtags}
-        selectedHashtag={selectedHashtag}
-        handleSelectHashtag={handleSelectHashtag}
-      />
-      <Footer />
-    </div>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/account" element={isLoggedIn && user ? <AccountPage user={user} /> : <Navigate to="/login" replace/>} />
+      <Route path="*" element={<NotFoundPage />} />
+
+    </Routes>
   );
 }
 

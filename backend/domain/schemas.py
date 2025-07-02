@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, List
 
+
 # Request Models - User
 class UserCreate(BaseModel):
     username: str
@@ -25,12 +26,11 @@ class Token(BaseModel):
 class FeedbackCreate(BaseModel):
     content: str
     company: str
-    is_anonymous: bool = False
 
 class FeedbackUpdate(BaseModel):
     content: Optional[str] = None
     company: Optional[str] = None
-    
+
 # Response Models - Feedback
 class FeedbackResponse(BaseModel):
     id: int
@@ -38,12 +38,6 @@ class FeedbackResponse(BaseModel):
     upvoteCount: int = Field(alias="upvote_count")
     daysAgo: int = Field(alias="days_ago")
     company: str
-    badgeLetter: str
-    is_anonymous: bool = False
-    user: Optional[UserResponse] = None
-
-class FeedbackList(BaseModel):
-    items: List[FeedbackResponse]
 
 class UpvoteResponse(BaseModel):
     upvoteCount: int 

@@ -8,14 +8,16 @@ import logging
 from database import get_db
 from repositories.user_repository import UserRepository
 from services.user_service import UserService, SECRET_KEY, ALGORITHM
-from domain.schemas import UserCreate, UserResponse, Token
+from domain.schemas import UserCreate, UserResponse, Token, UserLogin
 from domain.models import UserDomain
 
 
-router = APIRouter()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/users/login")
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/users/login")
+
+router = APIRouter(prefix="/api/users", tags=["users"])
 
 def get_user_service(db: Session = Depends(get_db)) -> UserService:
     repository = UserRepository(db)
@@ -42,12 +44,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
-async def get_optional_user(token: str = Depends(oauth2_scheme)) -> Optional[UserDomain]:
-    try:
-        return await get_current_user(token)
-    except:
-        return None
-
 @router.post("/register", response_model=UserResponse)
 def register_user(user_create: UserCreate, service: UserService = Depends(get_user_service)):
     logger.info("Registering user")
@@ -60,15 +56,13 @@ def register_user(user_create: UserCreate, service: UserService = Depends(get_us
 
 @router.post("/login", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), service: UserService = Depends(get_user_service)):
-    logger.info("Logging in" + form_data.username)
-    # Authenticate user
-    user = service.authenticate_user(email=form_data.username, password=form_data.password)
+    user_login = UserLogin(email=form_data.username, password=form_data.password)
+    logger.info("Authenticating user %s", user_login)
+    user = service.authenticate_user(user_login)
     
-    # Check if user ID exists
-    if user.id is None:
-        raise HTTPException(status_code=500, detail="User ID is missing")
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication failed")
     
-    # Create access token
     return service.create_access_token(user_id=user.id)
 
 @router.get("/me", response_model=UserResponse)
@@ -78,4 +72,4 @@ async def get_user_me(current_user = Depends(get_current_user)):
         id=current_user.id,
         username=current_user.username,
         email=current_user.email
-    ) 
+    )

@@ -44,7 +44,7 @@ export async function loginUser(credentials: TUserLogin): Promise<TAuthToken> {
     const data = await response.json();
     // Store the token in localStorage
     setAuthToken(data.access_token);
-    return data as TAuthToken;
+    return data as TAuthToken;  
 }
 
 // Get current user information

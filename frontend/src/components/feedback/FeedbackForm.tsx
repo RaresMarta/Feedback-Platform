@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { MAX_CHARACTERS } from "../../lib/constants";
-import { TFeedbackCreate } from "../../lib/types";
+import { TFeedbackCreate, TUserResponse } from "../../lib/types";
 
 type FeedbackFormProps = {
   onAddToList: (feedback: TFeedbackCreate) => void;
   setErrorMessage: (message: string) => void;
   submitting: boolean;
+  user: TUserResponse | null;
 };
 
-export default function FeedbackForm({ onAddToList, setErrorMessage, submitting }: FeedbackFormProps) {
+export default function FeedbackForm({ onAddToList, setErrorMessage, submitting, user }: FeedbackFormProps) {
   const [text, setText] = useState("");
 
   const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -62,7 +63,14 @@ export default function FeedbackForm({ onAddToList, setErrorMessage, submitting 
       />
 
       <label htmlFor="feedback-textarea">
-        Enter your feedback and tag the #company
+        {user ? (
+          <>
+            Hi {user.username}!<br />
+            Enter your feedback and tag the #company
+          </>
+        ) : (
+          "Enter your feedback and tag the #company"
+        )}
       </label>
 
       <div className="form-controls">

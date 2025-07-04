@@ -20,5 +20,5 @@ app.add_middleware(
 init_db()
 
 # Include routers
-app.include_router(feedback_router, prefix="/api")
-app.include_router(user_router, prefix="/api/users") 
+app.include_router(feedback_router)
+app.include_router(user_router) 

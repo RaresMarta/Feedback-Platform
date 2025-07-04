@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship, declarative_base
 
 @dataclass
 class UserDomain:
-    id: Optional[int] = None
+    id: int = 0
     username: str = ""
     email: str = ""
     password: Optional[str] = None
@@ -16,8 +16,8 @@ class UserDomain:
 
 @dataclass
 class FeedbackDomain:
-    id: Optional[int] = None
-    user_id: Optional[int] = None
+    id: int = 0
+    user_id: int = 0
     content: str = ""
     company: str = ""
     upvote_count: int = 0
@@ -39,7 +39,7 @@ class User(Base):
 
     def to_domain(self) -> UserDomain:
         return UserDomain(
-            id=getattr(self, 'id', None),
+            id=getattr(self, 'id', 0),
             username=getattr(self, 'username', ''),
             email=getattr(self, 'email', ''),
             password=getattr(self, 'hashed_password', None),
@@ -60,8 +60,8 @@ class Feedback(Base):
 
     def to_domain(self) -> FeedbackDomain:
         return FeedbackDomain(
-            id=getattr(self, 'id', None),
-            user_id=getattr(self, 'user_id', None),
+            id=getattr(self, 'id', 0),
+            user_id=getattr(self, 'user_id', 0),
             content=getattr(self, 'content', ''),
             company=getattr(self, 'company', ''),
             upvote_count=getattr(self, 'upvote_count', 0),

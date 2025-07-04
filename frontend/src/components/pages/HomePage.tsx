@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import Container from "../layout/Container";
 import Footer from "../layout/Footer";
 import HashtagList from "../HashtagList";
-import { TFeedbackItem, TFeedbackCreate } from "../../lib/types";
+import { TFeedbackItem, TFeedbackCreate, TUserResponse } from "../../lib/types";
 import { getAllFeedbacks, postFeedback } from "../apis/feedbackApi";
 
 
-export default function HomePage() {
+export default function HomePage({ isLoggedIn, user }: { isLoggedIn: boolean, user: TUserResponse | null }) {
   const [feedbackItems, setFeedbackItems] = useState<TFeedbackItem[]>([]);
   const [selectedHashtag, setSelectedHashtag] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -25,6 +25,7 @@ export default function HomePage() {
       try {
         const data = await getAllFeedbacks();
         setFeedbackItems(data);
+        console.log(data);
       } catch (error) {
         setErrorMessage("Failed to fetch feedback items. Please try again.");
       }
@@ -35,6 +36,12 @@ export default function HomePage() {
 
   // Add feedback item
   const handleAddToList = async (feedbackData: TFeedbackCreate) => {
+    // If user is not logged in, prevent from adding feedback
+    if (!isLoggedIn) { 
+      setErrorMessage("Please log in to add feedback.");
+      return;
+    }
+
     // Prevent button action if already submitting
     if (submitting) return;
     setSubmitting(true);
@@ -77,6 +84,7 @@ export default function HomePage() {
         setErrorMessage={setErrorMessage}
         handleAddToList={handleAddToList}
         submitting={submitting}
+        user={user}
       />
       <HashtagList
         hashtags={hashtags}

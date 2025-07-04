@@ -10,7 +10,7 @@ from domain.models import User, FeedbackDomain
 from domain.schemas import FeedbackCreate, FeedbackResponse, UpvoteResponse
 import logging
 
-
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -23,14 +23,13 @@ def get_feedback_service(db: Session = Depends(get_db)) -> FeedbackService:
 @router.get("/", response_model=List[FeedbackResponse])
 def get_feedbacks(service: FeedbackService = Depends(get_feedback_service)):
     logger.info("Getting all feedbacks")
-    feedbacks = service.get_all_feedbacks()
-    return feedbacks
+    return service.get_all_feedbacks()
 
 @router.post("/", response_model=FeedbackResponse)
-def create_feedback(
+async def post_feedback(
     feedback_create: FeedbackCreate,
     service: FeedbackService = Depends(get_feedback_service),
-    current_user: Optional[User] = Depends(get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     user_id = getattr(current_user, 'id', None)
     if user_id is None:

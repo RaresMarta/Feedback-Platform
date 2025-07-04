@@ -44,26 +44,30 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
+
 @router.post("/register", response_model=UserResponse)
-def register_user(user_create: UserCreate, service: UserService = Depends(get_user_service)):
-    logger.info("Registering user")
+def register(user_create: UserCreate, service: UserService = Depends(get_user_service)):
     user_domain = UserDomain(
         username=user_create.username,
         email=user_create.email,
         password=user_create.password
     )
-    return service.create_user(user_domain)
+    logger.info("Registering user %s", user_domain)
+    return service.register_user(user_domain)
+
 
 @router.post("/login", response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), service: UserService = Depends(get_user_service)):
-    user_login = UserLogin(email=form_data.username, password=form_data.password)
-    logger.info("Authenticating user %s", user_login)
-    user = service.authenticate_user(user_login)
-    
+def login(form_data: OAuth2PasswordRequestForm = Depends(), service: UserService = Depends(get_user_service)):
+    credentials = UserLogin(email=form_data.username, password=form_data.password)
+    logger.info("Authenticating user %s", credentials.email)
+    user = service.authenticate_user(credentials)
+
     if not user:
         raise HTTPException(status_code=401, detail="Authentication failed")
-    
-    return service.create_access_token(user_id=user.id)
+        
+    logger.info("User authenticated: %s", user)
+    return service.create_access_token(user)
+
 
 @router.get("/me", response_model=UserResponse)
 async def get_user_me(current_user = Depends(get_current_user)):

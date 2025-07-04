@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr
-from typing import Optional, List
+from typing import Optional
 
 
 # Request Models - User
@@ -21,6 +21,7 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    user: UserResponse
 
 # Request Models - Feedback
 class FeedbackCreate(BaseModel):

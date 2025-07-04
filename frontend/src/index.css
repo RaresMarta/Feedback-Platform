@@ -9,6 +9,11 @@
   box-sizing: border-box;
 }
 
+html, body {
+  scroll-behavior: smooth;
+  scroll-padding-top: 60px; /* Match navbar height */
+}
+
 ul,
 ol {
   list-style: none;
@@ -78,8 +83,9 @@ body {
   min-height: 100vh;
   font-family: "Inter", sans-serif;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  padding-top: 60px; /* Match navbar height */
 
   scrollbar-width: none; /* Firefox */
 }

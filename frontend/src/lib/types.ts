@@ -40,6 +40,7 @@ export type TUserResponse = {
 export type TAuthToken = {
   access_token: string;
   token_type: string;
+  user: TUserResponse;
 };
 
 // UI Component types

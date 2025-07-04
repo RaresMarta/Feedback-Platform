@@ -1,4 +1,4 @@
-import { TFeedbackItem, TFeedbackCreate } from "../../lib/types";
+import { TFeedbackItem, TFeedbackCreate, TUserResponse } from "../../lib/types";
 import FeedbackList from "../feedback/FeedbackList";
 import Header from "./Header";
 
@@ -9,6 +9,7 @@ type ContainerProps = {
   setErrorMessage: (message: string) => void;
   handleAddToList: (feedback: TFeedbackCreate) => void;
   submitting: boolean;
+  user: TUserResponse | null;
 };
 
 export default function Container({
@@ -18,6 +19,7 @@ export default function Container({
   setErrorMessage,
   handleAddToList,
   submitting,
+  user
 }: ContainerProps) {
   return (
     <main className="container">
@@ -25,6 +27,7 @@ export default function Container({
         handleAddToList={handleAddToList} 
         setErrorMessage={setErrorMessage}
         submitting={submitting}
+        user={user}
       />
       <FeedbackList
         feedbackItems={feedbackItems}

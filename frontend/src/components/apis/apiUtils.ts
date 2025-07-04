@@ -21,7 +21,7 @@ export function removeAuthToken(): void {
 // Check if user is logged in
 export function isLoggedIn(): boolean {
     return !!localStorage.getItem("token");
-} 
+}
 
 // Create headers with authentication token
 export function createAuthHeaders(): Headers {

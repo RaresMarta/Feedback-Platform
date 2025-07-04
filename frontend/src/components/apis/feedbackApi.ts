@@ -11,7 +11,7 @@ export async function getAllFeedbacks(): Promise<TFeedbackItem[]> {
         await handleApiError(response);
     }
     const data = await response.json();
-    return data.items as TFeedbackItem[];
+    return data as TFeedbackItem[];
 }
 
 // Create a feedback (handles both regular and anonymous feedback)

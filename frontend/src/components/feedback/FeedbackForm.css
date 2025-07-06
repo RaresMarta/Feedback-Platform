@@ -1,0 +1,164 @@
+/* --- Feedback Form & Header Styles (grouped) --- */
+
+.page-header {
+  padding-top: 40px;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  min-height: 300px; /* Ensure consistent height even with error message */
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  padding: 20px 0;
+}
+
+.form {
+  width: 470px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.form:hover,
+.form:focus {
+  background-color: rgba(255, 255, 255, 0.055);
+}
+
+.form:focus-within {
+  outline: 2px solid rgba(255, 255, 255, 0.125);
+}
+
+.form--invalid {
+  box-shadow: 0 0 0 2px #8a3d2c;
+}
+
+.form--valid {
+  box-shadow: 0 0 0 2px #2c8a5e;
+}
+
+/* Textarea styles */
+.form textarea {    
+  width: 100%;
+  height: 100px;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  padding: 15px 20px;
+  caret-color: rgba(255, 255, 255, 0.25);
+}
+
+.form textarea::selection {
+  color: rgba(255, 255, 255, 0.85);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.form textarea::placeholder {
+  opacity: 0;
+}
+
+.form textarea:focus + label,
+.form textarea:not(:placeholder-shown) + label {
+  opacity: 0;
+}
+
+/* Label styles */
+.form-label {
+  position: absolute;
+  top: 13.5px;
+  left: 20px;
+  color: #969696;
+  opacity: 0.42;
+  pointer-events: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-label::selection,
+.form-label *::selection {
+  color: rgba(255, 255, 255, 0.85);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Form controls */
+.form-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}
+
+.char-count {
+  flex: 0 0 auto;
+  color: #969696;
+  opacity: 0.42;
+  display: flex;
+  align-items: center;
+}
+
+.form-char-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: #969696;
+  opacity: 1;
+  display: inline-block;
+  position: relative;
+}
+
+/* Form footer */
+.form-footer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 470px;
+  margin-top: 15px;
+  gap: 15px;
+  height: 41px; /* Fixed height instead of min-height */
+}
+
+/* Submit button styles */
+.submit-button {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-left: auto;
+  height: 41px; /* Match the error message height */
+}
+
+.submit-button:hover,
+.submit-button:focus {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.submit-button:active {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+/* Error message */
+.form-error {
+  background-color: rgba(231, 76, 60, 0.1);
+  border-left: 4px solid #e74c3c;
+  color: #e74c3c;
+  padding: 10px 15px;
+  border-radius: 4px;
+  flex: 1;
+  margin: 0;
+  box-sizing: border-box;
+  height: 41px; /* Fixed height */
+  display: flex;
+  align-items: center;
+}
+

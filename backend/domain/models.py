@@ -11,8 +11,8 @@ class UserDomain:
     id: int = 0
     username: str = ""
     email: str = ""
-    password: Optional[str] = None
-    created_at: Optional[datetime] = None
+    password: str = ""
+    created_at: datetime = datetime.now(timezone.utc)
 
 @dataclass
 class FeedbackDomain:
@@ -21,7 +21,7 @@ class FeedbackDomain:
     content: str = ""
     company: str = ""
     upvote_count: int = 0
-    created_at: Optional[datetime] = None
+    created_at: datetime = datetime.now(timezone.utc)
 
 # ---------------------------- ORM Models ---------------------------- #
 
@@ -42,8 +42,8 @@ class User(Base):
             id=getattr(self, 'id', 0),
             username=getattr(self, 'username', ''),
             email=getattr(self, 'email', ''),
-            password=getattr(self, 'hashed_password', None),
-            created_at=getattr(self, 'created_at', None),
+            password=getattr(self, 'hashed_password', ''),
+            created_at=getattr(self, 'created_at', datetime.now(timezone.utc)),
         )
 
 class Feedback(Base):
@@ -65,5 +65,5 @@ class Feedback(Base):
             content=getattr(self, 'content', ''),
             company=getattr(self, 'company', ''),
             upvote_count=getattr(self, 'upvote_count', 0),
-            created_at=getattr(self, 'created_at', None),
+            created_at=getattr(self, 'created_at', datetime.now(timezone.utc)),
         )

@@ -1,10 +1,13 @@
 import { API_BASE_URL } from "../../lib/constants";
-import { fetchWithAuth, handleApiError, setAuthToken, removeAuthToken } from "./apiUtils";
+import { fetchWithAuth, handleApiError, removeAuthToken } from "./apiUtils";
 import { TUserRegister, TUserLogin, TUserResponse, TAuthToken } from "../../lib/types";
 
 const USERS_URL = `${API_BASE_URL}/users`;
 
-// Register a new user
+/* 
+    Register a new user
+    Returns the user data
+*/
 export async function registerUser(userData: TUserRegister): Promise<TUserResponse> {
     const response = await fetch(`${USERS_URL}/register`, {
         method: "POST",
@@ -22,9 +25,11 @@ export async function registerUser(userData: TUserRegister): Promise<TUserRespon
     return data as TUserResponse;
 }
 
-// Login user
+/* 
+    Login a user
+    Returns the auth token
+*/
 export async function loginUser(credentials: TUserLogin): Promise<TAuthToken> {
-    // Convert to form data as required by OAuth2
     const formData = new URLSearchParams();
     formData.append("username", credentials.email);
     formData.append("password", credentials.password);
@@ -42,12 +47,13 @@ export async function loginUser(credentials: TUserLogin): Promise<TAuthToken> {
     }
     
     const data = await response.json();
-    // Store the token in localStorage
-    setAuthToken(data.access_token);
     return data as TAuthToken;  
 }
 
-// Get current user information
+/* 
+    Get the current user
+    Returns the user data
+*/
 export async function getCurrentUser(): Promise<TUserResponse> {
     const response = await fetchWithAuth(`${USERS_URL}/me`);
     

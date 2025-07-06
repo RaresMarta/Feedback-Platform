@@ -2,25 +2,28 @@
  * Utility functions for API requests
  */
 
-// Get authentication token from local storage
+// Get authentication token from local storage or session storage
 export function getAuthToken(): string | null {
-    return localStorage.getItem("token");
+    return localStorage.getItem("token") || sessionStorage.getItem("token");
 }
 
 // Set authentication token
-export function setAuthToken(token: string): void {
-    localStorage.setItem("token", token);
+export function setAuthToken(token: string, rememberMe: boolean): void {
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem("token", token);
 }
 
 // Remove authentication token
 export function removeAuthToken(): void {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
 }
 
 // Check if user is logged in
 export function isLoggedIn(): boolean {
-    return !!localStorage.getItem("token");
+    return !!(localStorage.getItem("token") || sessionStorage.getItem("token"));
 }
 
 // Create headers with authentication token

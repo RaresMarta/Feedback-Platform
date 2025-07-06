@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "./auth.css";
 import { TUserRegister } from "../../lib/types";
 import { registerUser } from "../apis/userApi";
-import { useToast } from "../ToastContext";
+import { useToast } from "../../contexts/ToastContext";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");

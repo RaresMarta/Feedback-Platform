@@ -25,6 +25,7 @@ export default function Container({
     <main className="container">
       <Header 
         handleAddToList={handleAddToList} 
+        errorMessage={errorMessage}
         setErrorMessage={setErrorMessage}
         submitting={submitting}
         user={user}
@@ -32,7 +33,6 @@ export default function Container({
       <FeedbackList
         feedbackItems={feedbackItems}
         loading={loading}
-        errorMessage={errorMessage}
       />
     </main>
   );

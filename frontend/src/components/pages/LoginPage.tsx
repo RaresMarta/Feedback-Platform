@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./auth.css";
-import { loginUser } from "../apis/userApi";
 import { TUserLogin } from "../../lib/types";
-import { useToast } from "../ToastContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  const { showToast } = useToast();
+  const { login, loading: isLoading } = useAuth();
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,24 +21,10 @@ export default function LoginPage() {
     }
     
     try {
-      setIsLoading(true);
       const credentials: TUserLogin = {email: email, password: password}
-      console.log("Logging in with:", credentials);
-      const response = await loginUser(credentials); // throws error if login fails
-
-      if (rememberMe) {
-        // Persistent storage
-        localStorage.setItem("token", response.access_token);
-        localStorage.setItem("user", JSON.stringify(response.user));
-      } else {
-        // Session-only storage
-        sessionStorage.setItem("token", response.access_token);
-        sessionStorage.setItem("user", JSON.stringify(response.user));
-      }
-
-      // Show success toast
-      showToast(`Welcome back, ${response.user.username}!`, "success");
-
+      console.log("Logging in with:", credentials.email);
+      await login(credentials, rememberMe);
+    
       // Reset form
       setEmail("");
       setPassword("");
@@ -51,8 +35,6 @@ export default function LoginPage() {
     } catch (error) {
       console.error("Login error:", error);
       setErrorMessage("Invalid email or password");
-    } finally {
-      setIsLoading(false);  
     }
   }
 
@@ -62,13 +44,14 @@ export default function LoginPage() {
         <div className="auth-box">
           <h1 className="auth-title">Login</h1>
           
+          {/* Print error message if it exists */}
           {errorMessage && (
             <div className="auth-error">
-              <button className="auth-error-close" onClick={() => setErrorMessage("")}>×</button>
               {errorMessage}
             </div>
           )}
           
+          {/* Login form */}
           <form onSubmit={handleSubmit}>
             <div className="auth-field">
               <label className="auth-label" htmlFor="email">Email</label>
@@ -106,8 +89,7 @@ export default function LoginPage() {
                 checked={rememberMe} 
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
-              <label htmlFor="remember" className="auth-checkbox-label">Remember me</label>
-              <p>Remember me</p>
+              <p className="auth-checkbox-label">Remember me</p>
             </div>
             
             <button 

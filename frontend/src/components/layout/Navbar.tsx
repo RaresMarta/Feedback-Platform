@@ -1,32 +1,9 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
 import "./Navbar.css";
-import { TUserResponse } from "../../lib/types";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<TUserResponse | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userString = localStorage.getItem("user");
-    if (token && userString) {
-      try {
-        const userData = JSON.parse(userString);
-        setUser(userData);
-        setIsLoggedIn(true);
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-      }
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setIsLoggedIn(false);
-    window.location.href = "/";
-  };
+  const { isLoggedIn, user, logout } = useAuth();
 
   return (
     <nav className="navbar">
@@ -46,7 +23,7 @@ export default function Navbar() {
                   <>
                     <div className="username">{user?.username}</div>
                     <Link to="/account">My Account</Link>
-                    <button onClick={handleLogout}>Logout</button>
+                    <button onClick={logout}>Logout</button>
                   </>
                 ) : (
                   <>
